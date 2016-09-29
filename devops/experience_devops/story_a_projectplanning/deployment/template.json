@@ -1,0 +1,222 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "AdminUserName": {
+      "type": "string",
+      "defaultValue": "devimmersion",
+      "minLength": 1
+    },
+    "AdminPassword": {
+      "type": "securestring",
+      "defaultValue": "P2ssw0rd@Dev"
+    },
+    "PrimaryStorageAccountName": {
+      "type": "string"
+    },
+    "PrimaryStorageAccountKey": {
+      "type": "string"
+    },
+    "JumpHostOSDiskVhdUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Uri of the your user image"
+      }
+    },
+    "immersionScriptModuleFileLink": {
+      "type": "string"
+    },
+    "configureJumphostScriptFileLink": {
+      "type": "string"
+    },
+    "contentPayloadFileLink": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "JumpHostVMName": "[concat('vm', uniqueString(resourceGroup().id))]",
+    "JumphostVhd": "[concat('https://', parameters('PrimaryStorageAccountName'), '.blob.core.windows.net/assets/jumphost.vhd')]",
+    "JumpHostDnsName": "[concat('vm', uniqueString(resourceGroup().id))]",
+    "JumpHostVNet": "[concat('vnet', uniqueString(resourceGroup().id))]",
+    "JumpHostVNetPrefix": "10.0.0.0/16",
+    "JumpHostVNetSubnet1Name": "Subnet-1",
+    "JumpHostVNetSubnet1Prefix": "10.0.0.0/24",
+    "JumpHostVNetSubnet2Name": "Subnet-2",
+    "JumpHostVNetSubnet2Prefix": "10.0.1.0/24",
+    "JumpHostVMVmSize": "Standard_D2_v2",
+    "JumpHostVMVnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('JumpHostVNet'))]",
+    "JumpHostVMSubnetRef": "[concat(variables('JumpHostVMVnetID'), '/subnets/', variables('JumpHostVNetSubnet1Name'))]",
+    "JumpHostVMNicName": "[concat(variables('JumpHostVMName'), 'NetworkInterface')]",
+    "jumphostpublicipDnsName": "[concat('jumphost', uniqueString(subscription().id, resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "name": "[variables('JumpHostVNet')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "JumpHostVNet"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('JumpHostVNetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('JumpHostVNetSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('JumpHostVNetSubnet1Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('JumpHostVNetSubnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('JumpHostVNetSubnet2Prefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('JumpHostVMNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('JumpHostVNet'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('jumphostpublicipDnsName'))]"
+      ],
+      "tags": {
+        "displayName": "JumpHostVMNic"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('JumpHostVMSubnetRef')]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('jumphostpublicipDnsName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('JumpHostVMName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('JumpHostVMNicName'))]"
+      ],
+      "tags": {
+        "displayName": "JumpHostVM"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('JumpHostVMVmSize')]"
+        },
+        "storageProfile": {
+          "osDisk": {
+            "osType": "Windows",
+            "name": "JumpHostVMOSDisk",
+            "vhd": {
+              "uri": "[variables('jumphostVhd')]"
+            },
+            "createOption": "Attach",
+            "caching": "ReadWrite"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('JumpHostVMNicName'))]"
+            }
+          ]
+        }
+      },
+      "resources": [
+        {
+          "name": "ConfigureJumpHost",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-06-15",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', variables('JumpHostVMName'))]"
+          ],
+          "tags": {
+            "displayName": "ConfigureJumpHost"
+          },
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.8",
+            "autoUpgradeMinorVersion": false,
+            "settings": {
+              "fileUris": [
+                "[parameters('immersionScriptModuleFileLink')]"
+              ],
+              "scriptFileUri": "[parameters('configureJumphostScriptFileLink')]",
+              "otherFileUris": [
+                "[parameters('contentPayloadFileLink')]"
+              ],
+              "installGuide": true,
+              "commandToExecute": "powershell -ExecutionPolicy Unrestricted -Command \"Import-Module ((Get-ChildItem -Recurse -Path Immersion.psm1).FullName); Invoke-CustomScript\""
+            },
+            "protectedSettings": {
+              "storageAccountName": "[parameters('PrimaryStorageAccountName')]",
+              "storageAccountKey": "[parameters('PrimaryStorageAccountKey')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "[variables('jumphostpublicipDnsName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "JumpHostPublicIP"
+      },
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[variables('JumpHostDnsName')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "jumphostDnsName": {
+      "type": "string",
+      "value": "[concat(variables('jumphostpublicipDnsName'), '.', resourceGroup().location, '.cloudapp.azure.com')]"
+    },
+    "jumphostUsername": {
+      "type": "string",
+      "value": "[concat('contoso\\', parameters('AdminUserName'))]"
+    },
+    "jumphostPassword": {
+      "type": "string",
+      "value": "[parameters('AdminPassword')]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[parameters('PrimaryStorageAccountName')]"
+    },
+    "storageAccountKey": {
+      "type": "string",
+      "value": "[parameters('PrimaryStorageAccountKey')]"
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+    "$schema": "https://immtest-web.azurewebsites.net/schemas/0.0.1/ImmersionStoryMetadata.json",
+    "title": "Build",
+    "description": "Visual Studio Team Services simplifies continuous integration for your applications for all platforms and all languages",
+    "date_created": "2016-08-16",
+    "regions": [
+        "southcentralus"
+    ],
+    "topics": [
+        "VSTS",
+        "Build",
+	"Testing",
+	"Release",
+	"Azure"
+    ],
+    "products": [
+        "VSTS"
+    ],
+    "jobroles": [
+        "Developer"
+    ],
+    "persona_role": "Developer",
+    "audiences": [
+        "Developer"
+    ],
+    "level": "200",
+    "duration_minutes": 45,
+    "access_time_minutes": 5,
+    "warmup_time_minutes": 1,
+    "permissions": [
+        "admins"
+    ],
+    "requires_long_running_script_sentinel": false,
+    "depends_on": [
+       "story://content-private/devops/experience_devops/story_a_projectplanning"
+    ]
+}

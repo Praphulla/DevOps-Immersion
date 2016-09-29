@@ -1,0 +1,36 @@
+{
+    "$schema": "https://immtest-web.azurewebsites.net/schemas/0.0.1/ImmersionStoryMetadata.json",
+    "title": "Getting started with Git",
+    "description": "Host your code in Team Services with Git repos. Work together with your team in Git to share, review, and publish your project code using proven Git pull request team workflows.",
+    "date_created": "2016-08-16",
+    "regions": [
+        "southcentralus"
+    ],
+    "topics": [
+        "VSTS",
+        "Git",
+	"Branch Policy", 
+	"Pull Request"
+    ],
+    "products": [
+        "VSTS"
+    ],
+    "jobroles": [
+        "Developer"
+    ],
+    "persona_role": "Developer",
+    "audiences": [
+        "Developer"
+    ],
+    "level": "200",
+    "duration_minutes": 45,
+    "access_time_minutes": 5,
+    "warmup_time_minutes": 1,
+    "permissions": [
+        "admins"
+    ],
+    "requires_long_running_script_sentinel": false,
+    "depends_on": [
+       "story://content-private/devops/experience_devops/story_a_projectplanning"
+    ]
+}

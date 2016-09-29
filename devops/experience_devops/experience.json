@@ -1,0 +1,13 @@
+{
+    "$schema": "https://immtest-web.azurewebsites.net/schemas/0.0.1/ImmersionExperienceMetadata.json",
+    "title": "DevOps and Application Lifecycle Management",
+    "description": "Automate software delivery and enable collaboration between development and operations for any language, targeting any platform.",
+    "story_ids": [
+        "story://Content-Private/devops/experience_devops/story_a_projectplanning",
+        "story://Content-Private/devops/experience_devops/story_b_versioncontrol",
+        "story://Content-Private/devops/experience_devops/story_c_cicd"
+    ],
+    "permissions": [
+        "admins"
+    ]
+}

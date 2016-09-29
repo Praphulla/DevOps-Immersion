@@ -1,0 +1,41 @@
+{
+    "$schema": "https://immtest-web.azurewebsites.net/schemas/0.0.1/ImmersionStoryMetadata.json",
+    "title": "Agile Project Planning with Scrum and VSTS",
+    "description": "Use Agile tools to plan and track work using Scrum and Kanban processes or a mix of both",
+    "date_created": "2016-08-16",
+    "regions": [
+        "southcentralus"
+    ],
+    "topics": [
+        "VSTS",
+        "Agile",
+	"Agile Planning",
+        "Scrum",
+        "Scaled Agile Framework"
+    ],
+    "products": [
+        "VSTS"
+    ],
+    "jobroles": [
+        "Developer"
+    ],
+    "persona_role": "Developer",
+    "audiences": [
+        "Developer"
+    ],
+    "level": "200",
+    "duration_minutes": 45,
+    "access_time_minutes": 5,
+    "warmup_time_minutes": 1,
+    "permissions": [
+        "admins"
+    ],
+    "primary_template": "template.json",
+    "requires_long_running_script_sentinel": false,
+    "pre_deploy_script": "predeploy.ps1",
+    "parameters": {
+        "standalone": "template_facilitator.parameters.json",
+        "facilitator": "template_facilitator.parameters.json",
+        "student": "template_facilitator.parameters.json"
+    }
+}
