@@ -38,7 +38,7 @@ HealthClinic has three different agile teams working in the same project, with t
 
 ![](img/image5.jpg)
 
-The My Health Company teams uses Scrum as their framework for the software development process.
+The My Health Company teams use Scrum as their framework for the software development process.
 
 ## Scrum
 
@@ -47,13 +47,13 @@ Scrum is a management and control process that cuts through complexity to focus 
 ![](img/image6.jpg)
 
 Scrum itself is a simple framework for effective team collaboration on complex software projects.  Ken Schwaber and Jeff Sutherland have written The Scrum Guide to explain Scrum clearly and succinctly.
-Yoou can read more about Scrum in the Scrum Guide: http://www.scrumguides.org/scrum-guide.html 
+You can read more about Scrum in the Scrum Guide: http://www.scrumguides.org/scrum-guide.html 
 In the next chapter we resume the main Scrum events.
 
 ## Scrum Events
 
 ### The Sprint
-The heart of Scrum is a Sprint, a time-box of one month or less during which a “Done”, useable, and potentially releasable product Increment is created. Sprints best have consistent durations throughout a development effort. A new Sprint starts immediately after the conclusion of the previous Sprint.
+The heart of Scrum is a Sprint, a time-box of one month or less during which a “Done”, useable, and potentially releasable product increment is created. Sprints best have consistent durations throughout a development effort. A new Sprint starts immediately after the conclusion of the previous Sprint.
 Sprints contain and consist of the Sprint Planning, Daily Scrums, the development work, the Sprint Review, and the Sprint Retrospective.
 
 ### Sprint Planning
